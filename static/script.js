@@ -7,6 +7,8 @@
   let currentGuess = "";
   let gameOver = false;
   let submitting = false;
+  let hintsRemaining = 3;
+  let currentHintQuestion = null;
   const keyStatus = {}; // letter -> 'correct' | 'present' | 'absent'
 
   const boardEl = document.getElementById("board");
@@ -14,6 +16,11 @@
   const messageEl = document.getElementById("message");
   const defLength = document.getElementById("def-length");
   const defGuesses = document.getElementById("def-guesses");
+  const hintBtn = document.getElementById("hint-btn");
+  const hintStatusEl = document.getElementById("hint-status");
+  const hintModal = document.getElementById("hint-modal");
+  const hintQuestionText = document.getElementById("hint-question-text");
+  const hintAnswerEl = document.getElementById("hint-answer");
 
   const KB_ROWS = [
     ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
@@ -71,6 +78,60 @@
   function updateDefinition() {
     defLength.textContent = wordLength;
     defGuesses.textContent = maxGuesses;
+  }
+
+  function updateHintUI() {
+    hintStatusEl.textContent = `${hintsRemaining} hint${hintsRemaining === 1 ? "" : "s"} left`;
+    hintBtn.disabled = hintsRemaining <= 0 || gameOver;
+  }
+
+  function openHintModal() {
+    hintAnswerEl.value = "";
+    hintQuestionText.textContent = currentHintQuestion ? currentHintQuestion.prompt : "Ask for a hint to begin.";
+    hintModal.classList.remove("hidden");
+    hintAnswerEl.focus();
+  }
+
+  function closeHintModal() {
+    hintModal.classList.add("hidden");
+  }
+
+  async function fetchHintQuestion() {
+    const res = await fetch("/api/hint/question");
+    const data = await res.json();
+    if (!res.ok) {
+      showMessage(data.error || "Hint unavailable.", "error");
+      return;
+    }
+    currentHintQuestion = data.question;
+    hintsRemaining = data.remaining_hints;
+    updateHintUI();
+    openHintModal();
+  }
+
+  async function submitHintAnswer() {
+    if (!currentHintQuestion) {
+      showMessage("Ask for a hint question first.", "error");
+      return;
+    }
+    const res = await fetch("/api/hint/answer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answer: hintAnswerEl.value }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showMessage(data.error || "Unable to submit the answer.", "error");
+      return;
+    }
+    hintsRemaining = data.remaining_hints;
+    updateHintUI();
+    if (data.correct) {
+      showMessage(data.message, "success");
+    } else {
+      showMessage(data.message, "error");
+    }
+    closeHintModal();
   }
 
   // ---------------- messages ----------------
@@ -237,6 +298,9 @@
     buildBoard();
     buildKeyboard();
     updateDefinition();
+    hintsRemaining = data.remaining_hints;
+    currentHintQuestion = null;
+    updateHintUI();
     messageEl.className = "";
 
     if (!isFresh && data.guesses && data.guesses.length) {
@@ -305,6 +369,17 @@
   document.getElementById("new-game-btn").addEventListener("click", () => {
     startNewGame(wordLength, maxGuesses);
   });
+
+  hintBtn.addEventListener("click", () => {
+    if (hintsRemaining <= 0 || gameOver) {
+      showMessage("No hints remaining for this round.", "error");
+      return;
+    }
+    fetchHintQuestion();
+  });
+
+  document.getElementById("hint-close").addEventListener("click", closeHintModal);
+  document.getElementById("hint-submit").addEventListener("click", submitHintAnswer);
 
   // ---------------- boot ----------------
 

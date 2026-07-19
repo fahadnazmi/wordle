@@ -1,0 +1,17 @@
+{
+  "easy": [
+    {"prompt": "How many distinct arrangements can be made with the letters A, B, and C?", "answer": "6"},
+    {"prompt": "In how many ways can 2 students be chosen from a group of 5?", "answer": "10"},
+    {"prompt": "How many 3-digit numbers can be formed using digits 1, 2, 3 without repetition?", "answer": "6"}
+  ],
+  "medium": [
+    {"prompt": "How many 4-letter words can be formed from the letters of the word 'MATH' if repetition is not allowed?", "answer": "24"},
+    {"prompt": "How many committees of 3 members can be formed from 8 people?", "answer": "56"},
+    {"prompt": "In how many ways can a team of 2 boys and 3 girls be chosen from 4 boys and 5 girls?", "answer": "60"}
+  ],
+  "hard": [
+    {"prompt": "How many different 5-letter words can be formed from the letters of the word 'ARRANGE' if no letter is repeated?", "answer": "2520"},
+    {"prompt": "How many diagonals does a regular 10-sided polygon have?", "answer": "35"},
+    {"prompt": "How many ways can 5 distinct books be arranged on a shelf if 2 specific books must always be together?", "answer": "48"}
+  ]
+}

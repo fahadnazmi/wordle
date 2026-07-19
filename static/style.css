@@ -234,7 +234,42 @@ body {
 }
 .link-btn:hover { text-decoration: underline; }
 
-/* ---------- modal ---------- */
+/* ---------- hint strip / modal ---------- */
+.hint-strip {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 0 12px;
+}
+.hint-btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  border: none;
+  border-radius: 999px;
+  background: var(--forest);
+  color: var(--paper);
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.hint-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.hint-status {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+.hint-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  background: var(--paper);
+}
 .modal-backdrop {
   position: fixed;
   inset: 0;
