@@ -10,6 +10,8 @@
 </head>
 <body>
 
+<div id="background-layer" class="background-layer" aria-hidden="true"></div>
+
 <div class="page">
 
   <header class="chrome">
@@ -92,6 +94,7 @@
     defaultMaxGuesses: {{ default_max_guesses }}
   };
 </script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
