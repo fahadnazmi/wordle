@@ -14,6 +14,7 @@
   const boardEl = document.getElementById("board");
   const keyboardEl = document.getElementById("keyboard");
   const messageEl = document.getElementById("message");
+  const bgLayer = document.getElementById("background-layer");
   const defLength = document.getElementById("def-length");
   const defGuesses = document.getElementById("def-guesses");
   const hintBtn = document.getElementById("hint-btn");
@@ -137,10 +138,13 @@
   // ---------------- messages ----------------
 
   let msgTimer = null;
-  function showMessage(text, kind) {
+  function showMessage(text, kind, options = {}) {
     clearTimeout(msgTimer);
     messageEl.textContent = text;
     messageEl.className = kind ? `show ${kind}` : "show";
+    if (options.persist) {
+      return;
+    }
     if (kind !== "success") {
       msgTimer = setTimeout(() => {
         messageEl.className = "";
@@ -231,10 +235,10 @@
       if (data.over) {
         gameOver = true;
         if (data.won) {
-          showMessage("Magnificent! You found it.", "success");
+          showMessage("Magnificent! You found it.", "success", { persist: true });
           bounceRow(currentRow - 1);
         } else {
-          showMessage(`So close — the word was ${data.answer.toUpperCase()}.`, "error");
+          showMessage(`So close — the word was ${data.answer.toUpperCase()}.`, "error", { persist: true });
         }
       }
     } catch (err) {
@@ -301,6 +305,8 @@
     hintsRemaining = data.remaining_hints;
     currentHintQuestion = null;
     updateHintUI();
+    clearTimeout(msgTimer);
+    msgTimer = null;
     messageEl.className = "";
 
     if (!isFresh && data.guesses && data.guesses.length) {
@@ -319,9 +325,9 @@
       currentRow = data.guesses.length;
       refreshKeyboardColors();
       if (data.over && !data.won) {
-        showMessage(`So close — the word was ${data.answer.toUpperCase()}.`, "error");
+        showMessage(`So close — the word was ${data.answer.toUpperCase()}.`, "error", { persist: true });
       } else if (data.over && data.won) {
-        showMessage("Magnificent! You found it.", "success");
+        showMessage("Magnificent! You found it.", "success", { persist: true });
       }
     }
   }
@@ -381,9 +387,50 @@
   document.getElementById("hint-close").addEventListener("click", closeHintModal);
   document.getElementById("hint-submit").addEventListener("click", submitHintAnswer);
 
+  function createFallingNumbers() {
+    if (!bgLayer || typeof gsap === "undefined") return;
+    const count = window.innerWidth < 700 ? 30 : 44;
+    const pool = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement("span");
+      el.className = "number";
+      el.textContent = pool[Math.floor(Math.random() * pool.length)];
+      el.style.left = `${Math.random() * 100}%`;
+      el.style.fontSize = `${1 + Math.random() * 1.35}rem`;
+      el.style.opacity = `${0.24 + Math.random() * 0.28}`;
+      bgLayer.appendChild(el);
+
+      const duration = 7 + Math.random() * 6;
+      const drift = (Math.random() - 0.5) * 180;
+      const startY = -10 - Math.random() * 24;
+      const delay = Math.random() * 2.4;
+
+      gsap.set(el, { y: startY, x: 0, rotation: 0 });
+      gsap.to(el, {
+        y: "120vh",
+        x: drift,
+        rotation: 360,
+        duration,
+        ease: "none",
+        delay,
+        repeat: -1,
+        onRepeat: () => {
+          gsap.set(el, {
+            y: startY,
+            x: 0,
+            rotation: 0,
+            opacity: 0.24 + Math.random() * 0.28,
+          });
+        },
+      });
+    }
+  }
+
   // ---------------- boot ----------------
 
   async function boot() {
+    createFallingNumbers();
     const res = await fetch("/api/state");
     const data = await res.json();
     if (data.active) {
