@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wordle — Local Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="chrome">
+    <span class="eyebrow">Local Edition · No. 1</span>
+    <button id="settings-btn" class="icon-btn" aria-label="Open settings" title="Settings">⚙</button>
+  </header>
+
+  <section class="hero">
+    <h1 class="headword">wordle</h1>
+    <p class="definition" id="definition">
+      a <strong id="def-length">5</strong>-letter word, guessed in <strong id="def-guesses">6</strong> tries or fewer.
+    </p>
+  </section>
+
+  <section class="message-rail" aria-live="polite">
+    <span id="message"></span>
+  </section>
+
+  <main class="board-wrap">
+    <div id="board" class="board"></div>
+  </main>
+
+  <section class="legend">
+    <span class="legend-item"><i class="swatch correct"></i> correct spot</span>
+    <span class="legend-item"><i class="swatch present"></i> wrong spot</span>
+    <span class="legend-item"><i class="swatch absent"></i> not in word</span>
+  </section>
+
+  <footer class="keyboard-wrap">
+    <div id="keyboard" class="keyboard"></div>
+    <button id="new-game-btn" class="link-btn">start a new word →</button>
+  </footer>
+
+</div>
+
+<div id="settings-modal" class="modal-backdrop hidden">
+  <div class="modal" role="dialog" aria-label="Game settings">
+    <h2>Edition settings</h2>
+
+    <div class="setting-group">
+      <p class="setting-label">Word length</p>
+      <div id="length-chips" class="chip-row"></div>
+    </div>
+
+    <div class="setting-group">
+      <p class="setting-label">Number of tries</p>
+      <div id="guess-chips" class="chip-row"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button id="modal-cancel" class="btn-secondary">Cancel</button>
+      <button id="modal-apply" class="btn-primary">Apply &amp; start new word</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.GAME_CONFIG = {
+    wordLengths: {{ word_lengths | tojson }},
+    guessOptions: {{ guess_options | tojson }},
+    defaultWordLength: {{ default_word_length }},
+    defaultMaxGuesses: {{ default_max_guesses }}
+  };
+</script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
