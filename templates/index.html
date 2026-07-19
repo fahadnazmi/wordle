@@ -28,6 +28,11 @@
     <span id="message"></span>
   </section>
 
+  <section class="hint-strip" aria-live="polite">
+    <button id="hint-btn" class="hint-btn">Take a hint quiz</button>
+    <span id="hint-status" class="hint-status">3 hints left</span>
+  </section>
+
   <main class="board-wrap">
     <div id="board" class="board"></div>
   </main>
@@ -62,6 +67,19 @@
     <div class="modal-actions">
       <button id="modal-cancel" class="btn-secondary">Cancel</button>
       <button id="modal-apply" class="btn-primary">Apply &amp; start new word</button>
+    </div>
+  </div>
+</div>
+
+<div id="hint-modal" class="modal-backdrop hidden">
+  <div class="modal" role="dialog" aria-label="Hint quiz">
+    <h2>Hint quiz</h2>
+    <p id="hint-question-text" class="setting-label">Ask for a hint to begin.</p>
+    <label class="setting-label" for="hint-answer">Your answer</label>
+    <input id="hint-answer" class="hint-input" type="text" autocomplete="off">
+    <div class="modal-actions">
+      <button id="hint-close" class="btn-secondary">Close</button>
+      <button id="hint-submit" class="btn-primary">Submit</button>
     </div>
   </div>
 </div>
